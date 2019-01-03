@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Azure/azure-storage-blob-go/2016-05-31/azblob"
+	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/validation"
