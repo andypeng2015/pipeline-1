@@ -25,7 +25,7 @@ import (
 	"github.com/banzaicloud/pipeline/spotguide"
 
 	evbus "github.com/asaskevich/EventBus"
-	"github.com/banzaicloud/go-gin-prometheus"
+	ginprometheus "github.com/banzaicloud/go-gin-prometheus"
 	"github.com/banzaicloud/pipeline/api"
 	"github.com/banzaicloud/pipeline/api/ark/backups"
 	"github.com/banzaicloud/pipeline/api/ark/backupservice"
@@ -55,7 +55,7 @@ import (
 	"github.com/banzaicloud/pipeline/pkg/k8sclient"
 	"github.com/banzaicloud/pipeline/pkg/providers"
 	"github.com/banzaicloud/pipeline/secret"
-	"github.com/casbin/gorm-adapter"
+	gormadapter "github.com/casbin/gorm-adapter"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/goph/emperror"
@@ -296,6 +296,7 @@ func main() {
 	{
 		v1.Use(auth.Handler)
 		v1.GET("/me", userAPI.GetCurrentUser)
+		v1.PATCH("/me", userAPI.UpdateCurrentUser)
 		v1.Use(authorizationMiddleware)
 		orgs := v1.Group("/orgs")
 		{
