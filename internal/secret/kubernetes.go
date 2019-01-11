@@ -71,16 +71,14 @@ func CreateKubeSecret(req KubeSecretRequest) (v1.Secret, error) {
 		}
 	} else {
 		for key, specItem := range req.Spec {
-			if specItem.Value != "" { // Map value directly
-				kubeSecret.StringData[key] = specItem.Value
-			} else if specItem.Source != "" { // Map one secret
+			if specItem.Source != "" { // Map one secret
 				if opaqueMap[specItem.Source] {
 					continue
 				}
 
 				// TODO: error handling (missing secret key)?
 				kubeSecret.StringData[key] = req.Values[specItem.Source]
-			} else { // Map multiple secrets
+			} else if specItem.Value == "" { // Map multiple secrets
 				sourceMap := make(map[string]string)
 				if len(specItem.SourceMap) > 0 { // Map certain secrets
 					sourceMap = specItem.SourceMap
@@ -107,6 +105,8 @@ func CreateKubeSecret(req KubeSecretRequest) (v1.Secret, error) {
 				}
 
 				kubeSecret.StringData[key] = string(rawData)
+			} else { // Map value directly
+				kubeSecret.StringData[key] = specItem.Value
 			}
 		}
 	}

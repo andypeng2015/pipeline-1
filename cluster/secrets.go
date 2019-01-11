@@ -168,9 +168,7 @@ func InstallSecretByK8SConfig(kubeConfig []byte, orgID uint, secretName string, 
 	kubeSecretRequest := intSecret.KubeSecretRequest{
 		Name:      secretName,
 		Namespace: req.Namespace,
-		Type:      "",
-		Values:    nil,
-		Spec:      intSecret.KubeSecretSpec{},
+		Spec:      make(intSecret.KubeSecretSpec, len(req.Spec)),
 	}
 
 	sourceMeta := secretTypes.K8SSourceMeta{
@@ -186,13 +184,8 @@ func InstallSecretByK8SConfig(kubeConfig []byte, orgID uint, secretName string, 
 			return nil, emperror.With(errors.Wrap(err, "failed to get secret"), "secret", req.SourceSecretName)
 		}
 
-		kubeSecretRequest = intSecret.KubeSecretRequest{
-			Name:      secretName,
-			Namespace: req.Namespace,
-			Type:      secretItem.Type,
-			Values:    secretItem.Values,
-			Spec:      intSecret.KubeSecretSpec{},
-		}
+		kubeSecretRequest.Type = secretItem.Type
+		kubeSecretRequest.Values = secretItem.Values
 
 		sourceMeta = secretItem.K8SSourceMeta()
 	}
@@ -245,9 +238,7 @@ func MergeSecretByK8SConfig(kubeConfig []byte, orgID uint, secretName string, re
 	kubeSecretRequest := intSecret.KubeSecretRequest{
 		Name:      secretName,
 		Namespace: req.Namespace,
-		Type:      "",
-		Values:    nil,
-		Spec:      intSecret.KubeSecretSpec{},
+		Spec:      make(intSecret.KubeSecretSpec, len(req.Spec)),
 	}
 
 	sourceMeta := secretTypes.K8SSourceMeta{
@@ -263,13 +254,8 @@ func MergeSecretByK8SConfig(kubeConfig []byte, orgID uint, secretName string, re
 			return nil, emperror.With(errors.Wrap(err, "failed to get secret"), "secret", req.SourceSecretName)
 		}
 
-		kubeSecretRequest = intSecret.KubeSecretRequest{
-			Name:      secretName,
-			Namespace: req.Namespace,
-			Type:      secretItem.Type,
-			Values:    secretItem.Values,
-			Spec:      intSecret.KubeSecretSpec{},
-		}
+		kubeSecretRequest.Type = secretItem.Type
+		kubeSecretRequest.Values = secretItem.Values
 
 		sourceMeta = secretItem.K8SSourceMeta()
 	}

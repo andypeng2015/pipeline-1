@@ -82,16 +82,16 @@ func InstallSecretToCluster(c *gin.Context) {
 	secretName := c.Param("secretName")
 
 	// Either spec is not defined (empty) or at least one spec is not a value
-	hasSourceSecret := len(secretRequest.Spec) == 0
+	needsSecret := len(secretRequest.Spec) == 0
 	for _, spec := range secretRequest.Spec {
-		if spec.Source != "" || (spec.SourceMap != nil && len(spec.SourceMap) != 0) {
-			hasSourceSecret = true
+		if spec.Source != "" || len(spec.SourceMap) != 0 {
+			needsSecret = true
 			break
 		}
 	}
 
 	// If there is no separate pipeline secret name use the same as the cluster request name
-	if hasSourceSecret && secretRequest.SourceSecretName == "" {
+	if needsSecret && secretRequest.SourceSecretName == "" {
 		secretRequest.SourceSecretName = secretName
 	}
 
