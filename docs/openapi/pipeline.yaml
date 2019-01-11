@@ -6646,6 +6646,8 @@ components:
                     type: object
                     additionalProperties:
                         type: string
+                value:
+                    type: string
 
         InstallSecretResponse:
             type: object

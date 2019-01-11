@@ -37,6 +37,7 @@ type KubeSecretSpec map[string]KubeSecretSpecItem
 type KubeSecretSpecItem struct {
 	Source    string
 	SourceMap map[string]string
+	Value     string
 }
 
 // CreateKubeSecret creates a Kubernetes Secret object from a Secret.
@@ -70,7 +71,9 @@ func CreateKubeSecret(req KubeSecretRequest) (v1.Secret, error) {
 		}
 	} else {
 		for key, specItem := range req.Spec {
-			if specItem.Source != "" { // Map one secret
+			if specItem.Value != "" { // Map value directly
+				kubeSecret.StringData[key] = specItem.Value
+			} else if specItem.Source != "" { // Map one secret
 				if opaqueMap[specItem.Source] {
 					continue
 				}

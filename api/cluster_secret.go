@@ -36,6 +36,7 @@ type InstallSecretRequest struct {
 type InstallSecretRequestSpecItem struct {
 	Source    string            `json:"source,omitempty"`
 	SourceMap map[string]string `json:"sourceMap,omitempty"`
+	Value     string            `json:"value,omitempty"`
 }
 
 type InstallSecretResponse struct {
@@ -74,13 +75,23 @@ func InstallSecretToCluster(c *gin.Context) {
 		secretRequest.Spec[key] = cluster.InstallSecretRequestSpecItem{
 			Source:    spec.Source,
 			SourceMap: spec.SourceMap,
+			Value:     spec.Value,
 		}
 	}
 
 	secretName := c.Param("secretName")
 
+	// Either spec is not defined (empty) or at least one spec is not a value
+	hasSourceSecret := len(secretRequest.Spec) == 0
+	for _, spec := range secretRequest.Spec {
+		if spec.Source != "" || (spec.SourceMap != nil && len(spec.SourceMap) != 0) {
+			hasSourceSecret = true
+			break
+		}
+	}
+
 	// If there is no separate pipeline secret name use the same as the cluster request name
-	if secretRequest.SourceSecretName == "" {
+	if hasSourceSecret && secretRequest.SourceSecretName == "" {
 		secretRequest.SourceSecretName = secretName
 	}
 
